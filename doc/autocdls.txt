@@ -35,29 +35,32 @@ Neobundle User ~
 COMMANDS                                        *autocdls-commands*
 
 :Ls[!] [{path}]                    *:Ls*
-    Show up some files in cmd-line.
+        Show up some files in cmd-line.
 
 ------------------------------------------------------------------------------
 KEYMAPPINGS                                     *autocdls-keymappings*
 
 n <Plug>(autocdls-dols)             |<Plug>(autocdls-dols)|
-    Show up some files in current directory.
-
-    Example:
-        nmap <Leader>ls <Plug>(autocdls-dols)
-    write your vimrc.
+        Show up some files in current directory.
+    
+        Example:
+            nmap <Leader>ls <Plug>(autocdls-dols)
+        write your vimrc.
 
 ==============================================================================
 *VARIABLES*                                       *autocdls-variables*
 
-    " enable ls automatically (default 1)
-    let g:auto_ls_enabled = 1
+g:auto_ls_enabled                           *g:auto_ls_enabled*
+                                                (default: 1)
+        Automatically 'ls' after 'cd'.
 
-    " set the cmd-line's height (default &cmdheight)
-    let g:autocdls_set_cmdheight = 2
+g:autocdls_set_cmdheight                    *g:autocdls_set_cmdheight*
+                                                (default: &cmdheight)
+        Chnage the cmd-line's height.
 
-    " Record history of cd (default 0)
-    let g:autocdls_record_cdhist = 1
+g:autocdls_record_cdhist                    *g:autocdls_record_cdhist*
+                                                (default: 0)
+        Record the history of 'cd'
 
 ==============================================================================
 *TODO*                                            *autocdls-todo*
