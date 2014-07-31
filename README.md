@@ -33,10 +33,10 @@ write your vimrc.
 # Misc.
 ## TODO
 
- - When a path that contains spaces is passed as an argument to |s:get_list|,
+ - When a path that contains spaces is passed as an argument to `s:get_list`,
    error occurs.
 
- - Regardless |g:auto_ls_enabled| is valid, when the destination directory
+ - Regardless `g:auto_ls_enabled` is valid, when the destination directory
    has many files, not automatically execute ls after cd.
 
 
