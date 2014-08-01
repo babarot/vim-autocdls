@@ -73,10 +73,10 @@ function! s:get_list(path,bang)
   " Get the file list, accutually
   let filelist = glob(getcwd() . "/*")
 
+  " Go to $OLDPWD
+  execute ":lcd " . expand(l:pwd)
   if empty(filelist)
     echo "no file"
-    " Go to $OLDPWD
-    execute ":lcd " . expand(l:pwd)
     return
   endif
 
