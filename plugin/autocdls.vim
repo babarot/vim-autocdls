@@ -80,26 +80,23 @@ function! s:get_list(path,bang)
     return
   endif
 
+  let lists = ''
   for file in split(filelist, "\n")
     " Add '/' to tail of the file name if it is directory
     if isdirectory(file)
-      " No exists of '!'
-      if empty(l:bang)
-        echon fnamemodify(file, ":t") . "/" . " "
-      else
-        echo fnamemodify(file, ":t") . "/"
-      endif
+        let lists .= fnamemodify(file, ":t") . "/" . " "
     else
-      " No exists of '!'
-      if empty(l:bang)
-        echon fnamemodify(file, ":t") . " "
-      else
-        echo fnamemodify(file, ":t")
-      endif
+        let lists .= fnamemodify(file, ":t") . " "
     endif
   endfor
   " Go to $OLDPWD
-  execute ":lcd " . expand(l:pwd)
+  "execute ":lcd " . expand(l:pwd)
+
+  if empty(l:bang)
+    echo lists
+  else
+    echo tr(substitute(lists,' $','','g'), " ", "\n")
+  endif
 endfunction
 
 augroup autocdls-auto-cd
