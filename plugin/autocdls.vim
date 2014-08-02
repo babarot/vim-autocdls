@@ -4,10 +4,10 @@
 " Version: 0.1.0
 " License: MIT
 
-if exists("g:loaded_vimcdls")
+if exists("g:loaded_autocdls")
   finish
 endif
-let g:loaded_vimcdls = 1
+let g:loaded_autocdls = 1
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -29,16 +29,59 @@ if exists('g:autocdls_set_cmdheight')
   let &cmdheight=g:autocdls_set_cmdheight
 endif
 
+if !exists('g:autocdls_show_filecounter')
+  let g:autocdls_show_filecounter = 1
+endif
+
+if !exists('g:autocdls_show_pwd')
+  let g:autocdls_show_pwd = 0
+endif
+
+if !exists('g:autocdls_swaping_capital')
+  let g:autocdls_swaping_capital = 1
+endif
+
+if g:autocdls_swaping_capital != 0
+  let s:alter_letter_entries = []
+
+  function! s:alter_letter_add(original_pattern, alternate_name)
+    call add(s:alter_letter_entries, [a:original_pattern, a:alternate_name])
+  endfunction
+  cnoremap <expr> <Space> <SID>alter_letter()
+
+  function! s:alter_letter()
+    let cmdline = getcmdline()
+    for [original_pattern, alternate_name] in s:alter_letter_entries
+      if cmdline =~# original_pattern
+        return "\<C-u>" . alternate_name . substitute(cmdline, original_pattern, '', 'g') . " "
+      endif
+    endfor
+    return ' '
+  endfunction
+
+  call s:alter_letter_add('^ls!', 'Ls!')
+  call s:alter_letter_add('^ls', 'Ls')
+endif
+
 " Automatically ls after cd in Vim
 function! s:auto_cdls()
+  if g:autocdls_swaping_capital != 0
+    let cmdline = getcmdline()
+    for [original_pattern, alternate_name] in s:alter_letter_entries
+      if cmdline =~# original_pattern
+        return "\<C-u>" . alternate_name . "\<CR>"
+      endif
+    endfor
+  endif
+
   " Support cd, lcd and chdir
   if getcmdtype() == ':' && getcmdline() =~# '^cd\|^chd\%\[ir\]\|^lcd\?'
     " Only real path
-    let l:raw_path = substitute(getcmdline(),'\(^cd\|^chd\%\[ir\]\|^lcd\?\)\s*', '', 'g')
+  let l:raw_path = substitute(getcmdline(),'\(^cd\|^chd\%\[ir\]\|^lcd\?\)\s*', '', 'g')
 
-    if g:autocdls_record_cdhist == 1
-      let s:hist_file = expand('~/.vim/history')
-      execute ":redir! >>" . s:hist_file
+  if g:autocdls_record_cdhist == 1
+    let s:hist_file = expand('~/.vim/history')
+    execute ":redir! >>" . s:hist_file
       echo s:get_list(fnamemodify(l:raw_path, ":p"),'')
       redir END
     endif
@@ -57,7 +100,9 @@ function! s:get_list(path,bang)
   let l:bang = a:bang
 
   " Argmrnt of ':Ls'
-  if !empty(a:path)
+  if empty(a:path)
+    let l:path = getcwd()
+  else
     let l:path = substitute(expand(a:path), '/$', '', 'g')
     " Failure to get the file list
     if !isdirectory(l:path)
@@ -73,33 +118,46 @@ function! s:get_list(path,bang)
   " Get the file list, accutually
   let filelist = glob(getcwd() . "/*")
 
+  " Go to $OLDPWD
+  execute ":lcd " . expand(l:pwd)
   if empty(filelist)
     echo "no file"
-    " Go to $OLDPWD
-    execute ":lcd " . expand(l:pwd)
     return
   endif
 
+  let s:count = 0
+  let lists = ''
   for file in split(filelist, "\n")
     " Add '/' to tail of the file name if it is directory
+    let s:count += 1
     if isdirectory(file)
-      " No exists of '!'
-      if empty(l:bang)
-        echon fnamemodify(file, ":t") . "/" . " "
-      else
-        echo fnamemodify(file, ":t") . "/"
-      endif
+      let lists .= fnamemodify(file, ":t") . "/" . " "
     else
-      " No exists of '!'
-      if empty(l:bang)
-        echon fnamemodify(file, ":t") . " "
-      else
-        echo fnamemodify(file, ":t")
-      endif
+      let lists .= fnamemodify(file, ":t") . " "
     endif
   endfor
-  " Go to $OLDPWD
-  execute ":lcd " . expand(l:pwd)
+
+  if g:autocdls_show_pwd != 0
+    highlight Pwd cterm=NONE ctermfg=white ctermbg=black gui=NONE guifg=white guibg=black
+    echohl Pwd | echon substitute(l:path, $HOME, '~', 'g') | echohl NONE
+    echon "\: "
+  endif
+
+  if g:autocdls_show_filecounter != 0
+    highlight FileCounter cterm=NONE ctermfg=red ctermbg=black gui=NONE guifg=red guibg=black
+    echohl FileCounter | echon s:count | echohl NONE
+    echon "\: "
+  endif
+
+  if g:autocdls_show_filecounter != 0 || g:autocdls_show_pwd != 0
+    echon "   "
+  endif
+
+  if empty(l:bang)
+    echon lists
+  else
+    echo tr(substitute(lists,' $','','g'), " ", "\n")
+  endif
 endfunction
 
 augroup autocdls-auto-cd
