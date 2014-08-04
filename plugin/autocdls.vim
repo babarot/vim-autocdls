@@ -88,8 +88,8 @@ function! s:auto_cdls()
 
     redraw
     " Same result
-    "return empty(l:raw_path) ? "\<CR>" . s:get_list($HOME,'') : "\<CR>" . s:get_list(fnamemodify(l:raw_path, ":p"),'')
-    return "\<CR>" . string(empty(l:raw_path) ? s:get_list($HOME,'') : s:get_list(fnamemodify(l:raw_path, ":p"),''))
+    return empty(l:raw_path) ? "\<CR>" . s:get_list($HOME,'') : "\<CR>" . s:get_list(fnamemodify(l:raw_path, ":p"),'')
+    "return "\<CR>" . string(empty(l:raw_path) ? s:get_list($HOME,'') : s:get_list(fnamemodify(l:raw_path, ":p"),''))
   endif
   return "\<CR>"
 endfunction
@@ -112,14 +112,15 @@ function! s:get_list(path,bang)
       return
     endif
     " If the given path exist, cd to it
-    execute ":cd " . expand(l:path)
+    "execute ":cd " . expand(l:path)
   endif
 
   " Get the file list, accutually
-  let filelist = glob(getcwd() . "/*")
+  "let filelist = glob(getcwd() . "/*")
+  let filelist = glob(l:path . "/*")
 
   " Go to $OLDPWD
-  execute ":lcd " . expand(l:pwd)
+  "execute ":lcd " . expand(l:pwd)
   if empty(filelist)
     echo "no file"
     return
@@ -153,7 +154,7 @@ function! s:get_list(path,bang)
     echon "   "
   endif
 
-  if empty(l:bang)
+  if empty(l:bang) && strlen(lists) < &columns * 2
     echon lists
   else
     echo tr(substitute(lists,' $','','g'), " ", "\n")
