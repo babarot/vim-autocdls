@@ -1,6 +1,6 @@
 *autocdls.txt*  Automatically ls after cd in Vim.
 
-Version: 0.1.0
+Version: 0.1.2
 Author: b4b4r07 (https://github.com/b4b4r07)
 License: MIT License
 Repository: https://github.com/b4b4r07/autocdls.vim
@@ -34,8 +34,11 @@ Neobundle User ~
 ------------------------------------------------------------------------------
 COMMANDS                                        *autocdls-commands*
 
-:Ls[!] [{path}]                    *:Ls*
-        Show up some files in cmd-line.
+:Ls[!] [{path}]                       *:Ls*
+        Show up some files in the {path} directory to cmd-line.
+
+:LsAll[!] [{path}]                    *:LsAll*
+        Show up all files in the {path} directory to cmd-line.
 
 ------------------------------------------------------------------------------
 KEYMAPPINGS                                     *autocdls-keymappings*
@@ -62,6 +65,22 @@ g:autocdls_record_cdhist                    *g:autocdls_record_cdhist*
                                                 (default: 0)
         Record the history of 'cd'
 
+g:autocdls_show_filecounter                 *g:autocdls_show_filecounter*
+                                                (default: 0)
+        Show number of files in current directory to cmd-line
+
+g:autocdls_show_pwd                         *g:autocdls_show_pwd*
+                                                (default: 1)
+        Show number of files in current directory to cmd-line
+
+g:autocdls_alter_letter                     *g:autocdls_alter_letter*
+                                                (default: 1)
+        Alter letters. Capitalize or uncapitalize automatically
+        ex)
+           call s:alter_letter_add('^ls', 'Ls')
+        By this, typing 'ls' means typing 'Ls' in cmd-line
+
+
 ==============================================================================
 *TODO*                                            *autocdls-todo*
 
@@ -70,6 +89,7 @@ g:autocdls_record_cdhist                    *g:autocdls_record_cdhist*
 
  - Regardless |g:auto_ls_enabled| is valid, when the destination directory
    has many files, not automatically execute ls after cd.
+   Fixed~
 
 ==============================================================================
 *LICENSE*                                         *autocdls-license*
