@@ -37,8 +37,8 @@ if !exists('g:autocdls_show_pwd')
   let g:autocdls_show_pwd = 0
 endif
 
-if !exists('g:autocdls_swaping_capital')
-  let g:autocdls_swaping_capital = 1
+if !exists('g:autocdls_alter_letter')
+  let g:autocdls_alter_letter = 1
 endif
 "}}}
 
@@ -60,7 +60,7 @@ endfunction "}}}
 
 " Automatically ls after cd in Vim
 function! s:auto_cdls() "{{{
-  if g:autocdls_swaping_capital != 0
+  if g:autocdls_alter_letter != 0
     let cmdline = getcmdline()
     for [original_pattern, alternate_name] in s:alter_letter_entries
       if cmdline =~# original_pattern
@@ -77,24 +77,20 @@ function! s:auto_cdls() "{{{
     if g:autocdls_record_cdhist == 1
       let s:hist_file = expand('~/.vim/history')
       execute ":redir! >>" . s:hist_file
-      echo s:get_list(fnamemodify(l:raw_path, ":p"),'')
+      echo s:get_list(fnamemodify(l:raw_path, ":p"),'','','')
       redir END
     endif
 
     redraw
-    " Same result
-    "return "\<CR>" . string(empty(l:raw_path) ? s:get_list($HOME,'') : s:get_list(fnamemodify(l:raw_path, ":p"),''))
-    return empty(l:raw_path) ? "\<CR>" . s:get_list($HOME,'',1) : "\<CR>" . s:get_list(fnamemodify(l:raw_path, ":p"),'',1)
+    return empty(l:raw_path) ? "\<CR>" . s:get_list($HOME,'',1,'') : "\<CR>" . s:get_list(fnamemodify(l:raw_path, ":p"),'',1,'')
   else
     return "\<CR>"
   endif
 endfunction "}}}
 
 " Get the file list
-function! s:get_list(path,bang,msg) "{{{
-  let l:pwd = getcwd()
+function! s:get_list(path, bang, silent, all) "{{{
   let l:bang = a:bang
-
   " Argmrnt of ':Ls'
   if empty(a:path)
     let l:path = getcwd()
@@ -107,16 +103,14 @@ function! s:get_list(path,bang,msg) "{{{
       echohl NONE
       return
     endif
-    " If the given path exist, cd to it
-    "execute ":cd " . expand(l:path)
   endif
 
   " Get the file list, accutually
-  "let filelist = glob(getcwd() . "/*")
   let filelist = glob(l:path . "/*")
+  if a:all == 1
+    let filelist .= glob(l:path . "/.??*")
+  endif
 
-  " Go to $OLDPWD
-  "execute ":lcd " . expand(l:pwd)
   if empty(filelist)
     echo "no file"
     return
@@ -134,26 +128,27 @@ function! s:get_list(path,bang,msg) "{{{
     endif
   endfor
 
-  if g:autocdls_show_pwd != 0
+  if g:autocdls_show_pwd != 0 "{{{
     highlight Pwd cterm=NONE ctermfg=white ctermbg=black gui=NONE guifg=white guibg=black
     echohl Pwd | echon substitute(l:path, $HOME, '~', 'g') | echohl NONE
     echon "\: "
-  endif
+  endif "}}}
 
-  if g:autocdls_show_filecounter != 0
+  if g:autocdls_show_filecounter != 0 "{{{
     highlight FileCounter cterm=NONE ctermfg=red ctermbg=black gui=NONE guifg=red guibg=black
     echohl FileCounter | echon s:count | echohl NONE
     echon "\: "
-  endif
+  endif "}}}
 
-  if g:autocdls_show_filecounter != 0 || g:autocdls_show_pwd != 0
+  if g:autocdls_show_filecounter != 0 || g:autocdls_show_pwd != 0 "{{{
     echon "   "
-  endif
+  endif "}}}
 
-  if !empty(a:msg) && strlen(s:lists) > &columns * 2
-    echo s:count
+  if !empty(a:silent) && strlen(s:lists) > &columns * &cmdheight
+    echohl WarningMsg
+    echo s:count . ': too many files'
+    echohl NONE
     return
-    "\<C-u>"
   endif
 
   if empty(l:bang)
@@ -173,7 +168,7 @@ if g:auto_ls_enabled == 1 "{{{
   cnoremap <expr> <CR> <SID>auto_cdls()
 endif "}}}
 
-if g:autocdls_swaping_capital != 0 "{{{
+if g:autocdls_alter_letter != 0 "{{{
   let s:alter_letter_entries = []
 
   cnoremap <expr> <Space> <SID>alter_letter()
@@ -182,8 +177,9 @@ if g:autocdls_swaping_capital != 0 "{{{
   call s:alter_letter_add('^ls', 'Ls')
 endif "}}}
 
-nnoremap <silent> <Plug>(autocdls-dols) :<C-u>call <SID>get_list(getcwd(),'','')<CR>
-command! -nargs=? -bar -bang -complete=dir Ls call s:get_list(<q-args>,<q-bang>,'')
+nnoremap <silent> <Plug>(autocdls-dols) :<C-u>call s:get_list(getcwd(),'','','')<CR>
+command! -nargs=? -bar -bang -complete=dir Ls call s:get_list(<q-args>,<q-bang>,'','')
+command! -nargs=? -bar -bang -complete=dir LsAll call s:get_list(<q-args>,<q-bang>,'',1)
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
