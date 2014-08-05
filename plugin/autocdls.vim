@@ -40,6 +40,10 @@ endif
 if !exists('g:autocdls_alter_letter')
   let g:autocdls_alter_letter = 1
 endif
+
+if !exists('g:autocdls_newline_disp')
+  let g:autocdls_newline_disp = 0
+endif
 "}}}
 
 " Add words such as xx to capitalize
@@ -82,56 +86,14 @@ function! s:auto_cdls() "{{{
     endif
 
     redraw
-    return empty(l:raw_path) ? "\<CR>" . s:get_list($HOME,'',1,'','') : "\<CR>" . s:get_list(fnamemodify(l:raw_path, ":p"),'',1,'','')
+    return empty(l:raw_path) ? "\<CR>" . s:get_list($HOME,'','many') : "\<CR>" . s:get_list(fnamemodify(l:raw_path, ":p"),'','many')
   else
     return "\<CR>"
   endif
 endfunction "}}}
 
-" Search the file or directory like grep
-function! s:ls_grep(pat,bang) "{{{
-  if empty(a:pat)
-    echohl WarningMsg
-    echon 'no arg'
-    echohl NONE
-    return
-  endif
-
-  let list_lists = []
-  let list = s:get_list(getcwd(),'','','',1)
-  "let list = ''
-  "let filelist = glob(getcwd() . "/*")
-  "if !empty(a:bang)
-  "  let filelist .= glob(getcwd() . "/.??*")
-  "endif
-
-  "for file in split(filelist, "\n")
-  "  let list .= fnamemodify(file, ":t") . " "
-  "endfor
-
-  for separated in split(list, ' ')
-    call add(list_lists, separated)
-  endfor
-  let n = 0
-  let l:flag = 0
-  while n < len(list_lists)
-    if stridx(list_lists[n], a:pat) != -1
-      let l:flag = 1
-      "echon n.':'.list_lists[n] . ' '
-      echon list_lists[n] . ' '
-    endif
-    let n += 1
-  endwhile
-  if l:flag == 0
-    echohl WarningMsg
-    echon 'no match'
-    echohl NONE
-  endif
-  unlet l:flag
-endfunction "}}}
-
 " Get the file list
-function! s:get_list(path, bang, silent, all, ret) "{{{
+function! s:get_list(path, bang, option) "{{{
   let l:bang = a:bang
   " Argmrnt of ':Ls'
   if empty(a:path)
@@ -149,7 +111,7 @@ function! s:get_list(path, bang, silent, all, ret) "{{{
 
   " Get the file list, accutually
   let filelist = glob(l:path . "/*")
-  if a:all == 1
+  if !empty(a:bang)
     let filelist .= glob(l:path . "/.??*")
   endif
 
@@ -170,21 +132,9 @@ function! s:get_list(path, bang, silent, all, ret) "{{{
     endif
   endfor
 
-  if a:ret == 1
+  if a:option == 'return'
     return s:lists
   endif
-
-  "let list_lists = []
-  "for separated in split(s:lists, ' ')
-  "  call add(list_lists, separated)
-  "endfor
-  "let n = 0
-  "while n < len(list_lists)
-  "  if stridx(list_lists[n], 'd') != -1
-  "    echon n.':'.list_lists[n] . ' '
-  "  endif
-  "  let n += 1
-  "endwhile
 
   if g:autocdls_show_pwd != 0 "{{{
     highlight Pwd cterm=NONE ctermfg=white ctermbg=black gui=NONE guifg=white guibg=black
@@ -202,17 +152,55 @@ function! s:get_list(path, bang, silent, all, ret) "{{{
     echon "   "
   endif "}}}
 
-  if !empty(a:silent) && strlen(s:lists) > &columns * &cmdheight
+  if a:option == 'many'
+    if strlen(s:lists) > &columns * &cmdheight
+      echohl WarningMsg
+      echo s:count . ': too many files'
+      echohl NONE
+      return
+    endif
+  else
+    if g:autocdls_newline_disp == 1
+      echo tr(substitute(s:lists,' $','','g'), " ", "\n")
+    endif
+  endif
+  echon s:lists
+endfunction "}}}
+
+" Search the file or directory like grep
+function! s:ls_grep(pattern, bang) "{{{
+  if empty(a:pattern)
     echohl WarningMsg
-    echo s:count . ': too many files'
+    echon 'no arg'
     echohl NONE
     return
+  elseif a:pattern == 1
+    let l:pattern = input('> ')
+  else
+    let l:pattern = a:pattern
   endif
 
-  if empty(l:bang)
-    echon s:lists
-  else
-    echo tr(substitute(s:lists,' $','','g'), " ", "\n")
+  let list_lists = []
+  let list = s:get_list(getcwd(),'','return')
+
+  for separated in split(list, ' ')
+    call add(list_lists, separated)
+  endfor
+
+  let n = 0
+  let l:flag = 0
+  while n < len(list_lists)
+    if stridx(list_lists[n], l:pattern) != -1
+      let l:flag = 1
+      echon list_lists[n] . ' '
+    endif
+    let n += 1
+  endwhile
+
+  if l:flag == 0
+    echohl WarningMsg
+    echon 'no match'
+    echohl NONE
   endif
 endfunction "}}}
 
@@ -235,9 +223,9 @@ if g:autocdls_alter_letter != 0 "{{{
   call s:alter_letter_add('^ls', 'Ls')
 endif "}}}
 
-nnoremap <silent> <Plug>(autocdls-dols) :<C-u>call s:get_list(getcwd(),'','','')<CR>
-command! -nargs=? -bar -bang -complete=dir Ls call s:get_list(<q-args>,<q-bang>,'','','')
-command! -nargs=? -bar -bang -complete=dir LsAll call s:get_list(<q-args>,<q-bang>,'',1,'')
+nnoremap <silent> <Plug>(autocdls-dols) :<C-u>call s:get_list(getcwd(),'','')<CR>
+nnoremap <silent> <Plug>(autocdls-dolsgrep) :<C-u>call s:ls_grep(1,'')<CR>
+command! -nargs=? -bar -bang -complete=dir Ls call s:get_list(<q-args>,<q-bang>,'')
 command! -nargs=? -bar -bang -complete=dir LsGrep call s:ls_grep(<q-args>,<q-bang>)
 
 let &cpo = s:save_cpo
