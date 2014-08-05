@@ -88,6 +88,39 @@ function! s:auto_cdls() "{{{
   endif
 endfunction "}}}
 
+" Search the file or directory like grep
+function! s:ls_grep(pat,bang) "{{{
+  let list_lists = []
+  let list = ''
+  let filelist = glob(getcwd() . "/*")
+  if !empty(a:bang)
+    let filelist .= glob(getcwd() . "/.??*")
+  endif
+
+  for file in split(filelist, "\n")
+    let list .= fnamemodify(file, ":t") . " "
+  endfor
+
+  for separated in split(list, ' ')
+    call add(list_lists, separated)
+  endfor
+  let n = 0
+  let l:flag = 0
+  while n < len(list_lists)
+    if stridx(list_lists[n], a:pat) != -1
+      let l:flag = 1
+      echon n.':'.list_lists[n] . ' '
+    endif
+    let n += 1
+  endwhile
+  if l:flag == 0
+    echohl WarningMsg
+    echon 'no match'
+    echohl NONE
+  endif
+  unlet l:flag
+endfunction "}}}
+
 " Get the file list
 function! s:get_list(path, bang, silent, all) "{{{
   let l:bang = a:bang
@@ -127,6 +160,18 @@ function! s:get_list(path, bang, silent, all) "{{{
       let s:lists .= fnamemodify(file, ":t") . " "
     endif
   endfor
+
+  "let list_lists = []
+  "for separated in split(s:lists, ' ')
+  "  call add(list_lists, separated)
+  "endfor
+  "let n = 0
+  "while n < len(list_lists)
+  "  if stridx(list_lists[n], 'd') != -1
+  "    echon n.':'.list_lists[n] . ' '
+  "  endif
+  "  let n += 1
+  "endwhile
 
   if g:autocdls_show_pwd != 0 "{{{
     highlight Pwd cterm=NONE ctermfg=white ctermbg=black gui=NONE guifg=white guibg=black
@@ -180,6 +225,7 @@ endif "}}}
 nnoremap <silent> <Plug>(autocdls-dols) :<C-u>call s:get_list(getcwd(),'','','')<CR>
 command! -nargs=? -bar -bang -complete=dir Ls call s:get_list(<q-args>,<q-bang>,'','')
 command! -nargs=? -bar -bang -complete=dir LsAll call s:get_list(<q-args>,<q-bang>,'',1)
+command! -nargs=? -bar -bang -complete=dir LsGrep call s:ls_grep(<q-args>,<q-bang>)
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
