@@ -90,6 +90,13 @@ endfunction "}}}
 
 " Search the file or directory like grep
 function! s:ls_grep(pat,bang) "{{{
+  if empty(a:pat)
+    echohl WarningMsg
+    echon 'no arg'
+    echohl NONE
+    return
+  endif
+
   let list_lists = []
   let list = ''
   let filelist = glob(getcwd() . "/*")
@@ -109,7 +116,8 @@ function! s:ls_grep(pat,bang) "{{{
   while n < len(list_lists)
     if stridx(list_lists[n], a:pat) != -1
       let l:flag = 1
-      echon n.':'.list_lists[n] . ' '
+      "echon n.':'.list_lists[n] . ' '
+      echon list_lists[n] . ' '
     endif
     let n += 1
   endwhile
