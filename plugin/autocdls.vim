@@ -82,7 +82,7 @@ function! s:auto_cdls() "{{{
     endif
 
     redraw
-    return empty(l:raw_path) ? "\<CR>" . s:get_list($HOME,'',1,'') : "\<CR>" . s:get_list(fnamemodify(l:raw_path, ":p"),'',1,'')
+    return empty(l:raw_path) ? "\<CR>" . s:get_list($HOME,'',1,'','') : "\<CR>" . s:get_list(fnamemodify(l:raw_path, ":p"),'',1,'','')
   else
     return "\<CR>"
   endif
@@ -98,15 +98,16 @@ function! s:ls_grep(pat,bang) "{{{
   endif
 
   let list_lists = []
-  let list = ''
-  let filelist = glob(getcwd() . "/*")
-  if !empty(a:bang)
-    let filelist .= glob(getcwd() . "/.??*")
-  endif
+  let list = s:get_list(getcwd(),'','','',1)
+  "let list = ''
+  "let filelist = glob(getcwd() . "/*")
+  "if !empty(a:bang)
+  "  let filelist .= glob(getcwd() . "/.??*")
+  "endif
 
-  for file in split(filelist, "\n")
-    let list .= fnamemodify(file, ":t") . " "
-  endfor
+  "for file in split(filelist, "\n")
+  "  let list .= fnamemodify(file, ":t") . " "
+  "endfor
 
   for separated in split(list, ' ')
     call add(list_lists, separated)
@@ -130,7 +131,7 @@ function! s:ls_grep(pat,bang) "{{{
 endfunction "}}}
 
 " Get the file list
-function! s:get_list(path, bang, silent, all) "{{{
+function! s:get_list(path, bang, silent, all, ret) "{{{
   let l:bang = a:bang
   " Argmrnt of ':Ls'
   if empty(a:path)
@@ -168,6 +169,10 @@ function! s:get_list(path, bang, silent, all) "{{{
       let s:lists .= fnamemodify(file, ":t") . " "
     endif
   endfor
+
+  if a:ret == 1
+    return s:lists
+  endif
 
   "let list_lists = []
   "for separated in split(s:lists, ' ')
@@ -231,8 +236,8 @@ if g:autocdls_alter_letter != 0 "{{{
 endif "}}}
 
 nnoremap <silent> <Plug>(autocdls-dols) :<C-u>call s:get_list(getcwd(),'','','')<CR>
-command! -nargs=? -bar -bang -complete=dir Ls call s:get_list(<q-args>,<q-bang>,'','')
-command! -nargs=? -bar -bang -complete=dir LsAll call s:get_list(<q-args>,<q-bang>,'',1)
+command! -nargs=? -bar -bang -complete=dir Ls call s:get_list(<q-args>,<q-bang>,'','','')
+command! -nargs=? -bar -bang -complete=dir LsAll call s:get_list(<q-args>,<q-bang>,'',1,'')
 command! -nargs=? -bar -bang -complete=dir LsGrep call s:ls_grep(<q-args>,<q-bang>)
 
 let &cpo = s:save_cpo
