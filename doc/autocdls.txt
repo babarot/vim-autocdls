@@ -25,8 +25,6 @@ automatically.
 
 Install in ~/.vim
 
-Neobundle User ~
->
     NeoBundle 'b4b4r07/autocdls.vim'
 <
 ==============================================================================
@@ -34,21 +32,31 @@ Neobundle User ~
 ------------------------------------------------------------------------------
 COMMANDS                                        *autocdls-commands*
 
-:Ls[!] [{path}]                       *:Ls*
+:Ls[!] [{path}]                                 *:Ls*
         Show up some files in the {path} directory to cmd-line.
+        If you want to show up all the files, including the files that begin
+        with a dot in the {path} directory, then please put a bang. (|:Ls!|)
+        If you omit the {path}, the current directory is specified as {path}.
 
-:LsAll[!] [{path}]                    *:LsAll*
-        Show up all files in the {path} directory to cmd-line.
+:LsGrep[!] {word}                               *:LsGrep*
+        Display the candidate that has the name of the directory that
+        contains the {word} in the current directory.
+        As well as |:Ls!|, if you want to search the directory that contains
+        the {word}, then please put a bang. (|:LsGrep|)
 
 ------------------------------------------------------------------------------
 KEYMAPPINGS                                     *autocdls-keymappings*
 
-n <Plug>(autocdls-dols)             |<Plug>(autocdls-dols)|
+n <Plug>(autocdls-do-ls)                        |<Plug>(autocdls-do-ls)|
         Show up some files in current directory.
     
         Example:
-            nmap <Leader>ls <Plug>(autocdls-dols)
+            nmap <Leader>ls <Plug>(autocdls-do-ls)
         write your vimrc.
+
+n <Plug>(autocdls-do-lsgrep)                    |<Plug>(autocdls-do-lsgrep)|
+        Narrow down the candidate when you do |:Ls| like the 'grep' commands.
+        Input the word to search from the cmd-line.
 
 ==============================================================================
 *VARIABLES*                                       *autocdls-variables*
@@ -80,6 +88,20 @@ g:autocdls_alter_letter                     *g:autocdls_alter_letter*
            call s:alter_letter_add('^ls', 'Ls')
         By this, typing 'ls' means typing 'Ls' in cmd-line
 
+g:autocdls_newline_disp                     *g:autocdls_newline_disp*
+                                                (default: 0)
+        Change result of |:Ls| or |:Ls!|. Default delimiter is space,
+        but when this variables equals one, delimiter is newline.
+        ex)
+            *g:autocdls_newline_disp* is 0:
+            :Ls /home
+            taro/ jiro/
+        
+            *g:autocdls_newline_disp* is 1:
+            :Ls /home
+            taro/
+            jiro/
+            Press ENTER or type command to continue~
 
 ==============================================================================
 *TODO*                                            *autocdls-todo*
@@ -121,6 +143,16 @@ SOFTWARE.
 
 0.1.0       2014-07-30
             - Initial version.
+
+0.1.1       2014-08-03
+            - Fix syntax error.
+            - No |:cd| and |:lcd| in internal
+            - Add |:LsAll|
+
+0.1.2       2014-08-05
+            - Add |:LsGrep|
+            - Merge |:LsAll| into |:Ls!|
+            - Change method of newline-disp (use |g:autocdls_newline_disp|)
 
 ==============================================================================
  vim:tw=78:et:ft=help:norl:
