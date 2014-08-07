@@ -18,10 +18,7 @@ augroup autocdls-auto-cd
   autocmd BufEnter * execute ":lcd " . expand("%:p:h")
 augroup END
 
-if !exists('g:autocdls_autols#enable')
-  let g:autocdls_autols#enable = 1
-endif
-
+let g:autocdls_autols#enable = get(g:, 'autocdls_autols#enable', 1)
 if g:autocdls_autols#enable
   cnoremap <expr> <CR> autocdls#auto_cdls()
 endif
