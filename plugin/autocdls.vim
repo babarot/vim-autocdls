@@ -18,7 +18,13 @@ augroup autocdls-auto-cd
   autocmd BufEnter * execute ":lcd " . expand("%:p:h")
 augroup END
 
-cnoremap <expr> <CR> autocdls#auto_cdls()
+if !exists('g:autocdls_autols#enable')
+  let g:autocdls_autols#enable = 1
+endif
+
+if g:autocdls_autols#enable
+  cnoremap <expr> <CR> autocdls#auto_cdls()
+endif
 
 nnoremap <silent> <Plug>(autocdls-do-ls) :<C-u>call autocdls#get_list(getcwd(), '', '')<CR>
 nnoremap <silent> <Plug>(autocdls-do-lsgrep) :<C-u>call autocdls#ls_grep(1, '')<CR>
