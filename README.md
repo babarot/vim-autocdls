@@ -18,10 +18,11 @@ If you install autocdls.vim, it enables you to 'ls' after 'cd' automatically.
         If you omit the {path}, the current directory is specified as {path}.
         
 	:LsGrep[!] {word}
+
         Display the candidate that has the name of the directory that
         contains the {word} in the current directory.
         As well as |:Ls!|, if you want to search the directory that contains
-        the {word}, then please put a bang. (|:LsGrep|)
+        the {word}, then please put a bang. (|:LsGrep!|)
 
 
 # Key mapping
