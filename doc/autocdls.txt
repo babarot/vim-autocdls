@@ -3,7 +3,7 @@
 Version: 0.1.2
 Author: b4b4r07 (https://github.com/b4b4r07)
 License: MIT License
-Repository: https://github.com/b4b4r07/autocdls.vim
+Repository: https://github.com/b4b4r07/vim-autocdls
 Last Change: 2014/07/30
 
 CONTENTS                    *autocdls-contents*
@@ -25,7 +25,7 @@ automatically.
 
 Install in ~/.vim
 
-    NeoBundle 'b4b4r07/autocdls.vim'
+    NeoBundle 'b4b4r07/vim-autocdls'
 <
 ==============================================================================
 *INTERFACE*                                       *autocdls-interface*
