@@ -2,6 +2,8 @@
 
 If you install autocdls.vim, it enables you to 'ls' after 'cd' automatically.
 
+![autocdls.gif](http://cl.ly/image/0O453w2t1o3u/autocdls.gif)
+
 # Installation
 
     NeoBundle 'b4b4r07/autocdls.vim'
@@ -10,65 +12,36 @@ If you install autocdls.vim, it enables you to 'ls' after 'cd' automatically.
 
 	:Ls[!] [{path}]
 
+        Show up some files in the {path} directory to cmd-line.
+        If you want to show up all the files, including the files that begin
+        with a dot in the {path} directory, then please put a bang. (|:Ls!|)
+        If you omit the {path}, the current directory is specified as {path}.
+        
+	:LsGrep[!] {word}
+        Display the candidate that has the name of the directory that
+        contains the {word} in the current directory.
+        As well as |:Ls!|, if you want to search the directory that contains
+        the {word}, then please put a bang. (|:LsGrep|)
+
+
 # Key mapping
 
 Optional.
 
 	nmap <Leader>ls <Plug>(autocdls-dols)
+	nmap <Leader>g  <Plug>(autocdls-do-lsgrep)
 
 write your vimrc.
 
 # Options
 
-    " enable ls automatically (default 1)
-    let g:auto_ls_enabled = 1
-
-    " set the cmd-line's height (default &cmdheight)
-    let g:autocdls_set_cmdheight = 2
-
-    " Record history of cd (default 0)
-    let g:autocdls_record_cdhist = 1
-
-
-# Misc.
-## TODO
-
- - When a path that contains spaces is passed as an argument to `s:get_list`,
-   error occurs.
-
- - Regardless `g:auto_ls_enabled` is valid, when the destination directory
-   has many files, not automatically execute ls after cd.
-
-
-## LICENSE
-
-The MIT License (MIT)
-
-Copyright (c) 2014 b4b4r07
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
-## CHANGELOG
-
-* v0.1.0 
-
-	2014-07-30	
-	Initial version.
-
+	" Set height of cmd-line (equals &cmdheight)
+	let g:autocdls_set_cmdheight = 2
+	" Count number of files when doing Ls
+	let g:autocdls_show_filecounter = 1
+	" View pwd when doing Ls
+	let g:autocdls_show_pwd = 0
+	" Repleace ls by Ls in cmd-line
+	let g:autocdls_alter_letter = 1
+	" Change spaces to newline (not recommended)
+	let g:autocdls_newline_disp = 0
