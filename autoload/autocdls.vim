@@ -36,6 +36,11 @@ endif
 if !exists('g:autocdls_newline_disp')
   let g:autocdls_newline_disp = 0
 endif
+
+if !exists('g:autocdls_ls_highlight')
+  let g:autocdls_ls_highlight = 1
+endif
+
 "}}}
 
 function! autocdls#alter_letter_add(original_pattern, alternate_name) "{{{
@@ -111,14 +116,18 @@ function! autocdls#get_list(path, bang, option) "{{{
   endif
 
   let s:count = 0
-  let s:lists = ''
+  let s:lists = []
   for file in split(l:filelist, "\n")
     " Add '/' to tail of the file name if it is directory
     let s:count += 1
     if isdirectory(file)
-      let s:lists .= fnamemodify(file, ":t") . "/" . " "
+      call add(s:lists,fnamemodify(file, ":t") . "/")
     else
-      let s:lists .= fnamemodify(file, ":t") . " "
+      if executable(file)
+        call add(s:lists,fnamemodify(file, ":t") . "*")
+      else
+        call add(s:lists,fnamemodify(file, ":t"))
+      endif
     endif
   endfor
 
@@ -143,7 +152,7 @@ function! autocdls#get_list(path, bang, option) "{{{
   endif "}}}
 
   if a:option == 'many'
-    if strlen(s:lists) > &columns * &cmdheight
+    if strlen(join(s:lists)) > &columns * &cmdheight
       echohl WarningMsg
       echo s:count . ': too many files'
       echohl NONE
@@ -154,7 +163,25 @@ function! autocdls#get_list(path, bang, option) "{{{
       echo tr(substitute(s:lists, ' $', '', 'g'), " ", "\n")
     endif
   endif
-  echon s:lists
+
+	highlight LsDirectory  cterm=bold ctermfg=NONE ctermfg=LightBlue gui=underline guifg=NONE guibg=blue
+	highlight LsExecutable cterm=bold ctermfg=NONE ctermfg=Green     gui=underline guifg=NONE guibg=blue
+  if !g:autocdls_ls_highlight
+    highlight LsDirectory  NONE
+    highlight LsExecutable NONE
+  endif
+
+  for item in s:lists
+    if item =~ '/'
+      echohl LsDirectory | echon item | echohl NONE
+      echon " "
+    elseif item =~ '*'
+      echohl LsExecutable | echon item | echohl NONE
+      echon " "
+    else
+      echon item." "
+    endif
+  endfor
 endfunction "}}}
 
 " Search the file or directory like grep
@@ -176,17 +203,17 @@ function! autocdls#ls_grep(pattern, bang) "{{{
     let l:filelist .= autocdls#get_list(getcwd(), '!' ,'return')
   endif
 
-  for separated in split(l:filelist, ' ')
-    call add(s:list_lists, separated)
-  endfor
+  "for separated in split(l:filelist, ' ')
+  "  call add(s:list_lists, separated)
+  "endfor
 
   let l:n = 0
   let l:flag = 0
   redraw
-  while l:n < len(s:list_lists)
-    if stridx(s:list_lists[n], l:pattern) != -1
+  while l:n < len(l:filelist)
+    if stridx(l:filelist[l:n], l:pattern) != -1
       let l:flag = 1
-      echon s:list_lists[l:n] . ' '
+      echon l:filelist[l:n] . ' '
     endif
     let l:n += 1
   endwhile
