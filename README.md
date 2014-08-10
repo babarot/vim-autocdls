@@ -2,7 +2,7 @@
 
 If you install autocdls.vim, it enables you to 'ls' after 'cd' automatically.
 
-![autocdls.gif](http://cl.ly/image/0O453w2t1o3u/autocdls.gif)
+![autocdls.gif](http://cl.ly/image/0F2X3b0m2a2L/autocdls.gif)
 
 # Installation
 
