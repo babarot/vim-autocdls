@@ -25,7 +25,7 @@ if !exists('g:autocdls_show_pwd')
 endif
 
 if !exists('g:autocdls_alter_letter')
-  let g:autocdls_alter_letter = 1
+  let g:autocdls_alter_letter = 0
   if g:autocdls_alter_letter
     let s:alter_letter_entries = []
   endif
@@ -287,7 +287,7 @@ function! autocdls#ls_grep(pattern, bang) "{{{
   call autocdls#colorize(lists)
 endfunction "}}}
 
-" Capitalize
+" Capitalize {{{
 if g:autocdls_alter_letter
   call autocdls#alter_letter_add('^ls$',  'Ls')
   call autocdls#alter_letter_add('^ls!$', 'Ls!')

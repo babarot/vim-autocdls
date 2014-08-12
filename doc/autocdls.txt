@@ -1,10 +1,10 @@
 *autocdls.txt*  Automatically ls after cd in Vim.
 
-Version: 0.1.2
+Version: 0.1.3
 Author: b4b4r07 (https://github.com/b4b4r07)
 License: MIT License
 Repository: https://github.com/b4b4r07/vim-autocdls
-Last Change: 2014/07/30
+Last Change: 2014/08/12
 
 CONTENTS                    *autocdls-contents*
 
@@ -13,7 +13,6 @@ Interface                   |autocdls-interface|
   Commands                  |autocdls-commands|
   Keymappings               |autocdls-keymappings|
 Variables                   |autocdls-variables|
-TODO                        |autocdls-todo|
 License                     |autocdls-license|
 Changelog                   |autocdls-changelog|
 
@@ -61,35 +60,41 @@ n <Plug>(autocdls-do-lsgrep)                    |<Plug>(autocdls-do-lsgrep)|
 ==============================================================================
 *VARIABLES*                                       *autocdls-variables*
 
-g:auto_ls_enabled                           *g:auto_ls_enabled*
+g:autocdls_autols#enable                    *g:autocdls_autols#enable*
                                                 (default: 1)
-        Automatically 'ls' after 'cd'.
+
+        Enable to |autocdls|, automatically execute 'ls' after 'cd'.
+        You can use |:Ls| and |:LsGrep| even though the value is equivalent to 0.
+        If you don't want to automatically execute 'ls', you should set 0 to
+        this value.
 
 g:autocdls_set_cmdheight                    *g:autocdls_set_cmdheight*
                                                 (default: &cmdheight)
+
         Chnage the cmd-line's height.
 
-g:autocdls_record_cdhist                    *g:autocdls_record_cdhist*
-                                                (default: 0)
-        Record the history of 'cd'
-
 g:autocdls_show_filecounter                 *g:autocdls_show_filecounter*
-                                                (default: 0)
+                                                (default: 1)
+
         Show number of files in current directory to cmd-line
 
 g:autocdls_show_pwd                         *g:autocdls_show_pwd*
-                                                (default: 1)
+                                                (default: 0)
+
         Show number of files in current directory to cmd-line
 
 g:autocdls_alter_letter                     *g:autocdls_alter_letter*
-                                                (default: 1)
-        Alter letters. Capitalize or uncapitalize automatically
-        ex)
-           call s:alter_letter_add('^ls', 'Ls')
-        By this, typing 'ls' means typing 'Ls' in cmd-line
+                                                (default: 0)
+
+        Capitalize or uncapitalize automatically. By this, typing
+        'ls' means typing 'Ls' in cmd-line. However, if the value
+        is equivalent to 1, it disables pure 'ls' that show all buffer
+        list and when you type 'ls<CR>' or  'ls<Space>', automatically
+        replace each 'Ls<CR>' or 'Ls<Space>'.
 
 g:autocdls_newline_disp                     *g:autocdls_newline_disp*
                                                 (default: 0)
+
         Change result of |:Ls| or |:Ls!|. Default delimiter is space,
         but when this variables equals one, delimiter is newline.
         ex)
@@ -103,15 +108,19 @@ g:autocdls_newline_disp                     *g:autocdls_newline_disp*
             jiro/
             Press ENTER or type command to continue~
 
-==============================================================================
-*TODO*                                            *autocdls-todo*
+g:autocdls_ls_highlight                     *g:autocdls_ls_highlight*
+                                                (default: 1)
 
- - When a path that contains spaces is passed as an argument to |s:get_list|,
-   error occurs.
+        Colorize its results when doing |:Ls| and |:LsGrep|. Directory color
+        is bluish. Executable files are greenish. Symbolick files are
+        lightblue.
 
- - Regardless |g:auto_ls_enabled| is valid, when the destination directory
-   has many files, not automatically execute ls after cd.
-   Fixed~
+g:autocdls_lsgrep_ignorecase                *g:autocdls_lsgrep_ignorecase*
+                                                (default: 1)
+
+        If the value is equivalent to 1, it makes |:LsGrep|'s search case
+        insensitive. For example, if you input 'apple', it matches both
+        'a' and 'A'.
 
 ==============================================================================
 *LICENSE*                                         *autocdls-license*
@@ -153,6 +162,10 @@ SOFTWARE.
             - Add |:LsGrep|
             - Merge |:LsAll| into |:Ls!|
             - Change method of newline-disp (use |g:autocdls_newline_disp|)
+
+0.1.3       2014-08-12
+            - Colorize results of |:Ls| and so on.
+            - Change internal code. Use list structure to return.
 
 ==============================================================================
  vim:tw=78:et:ft=help:norl:
