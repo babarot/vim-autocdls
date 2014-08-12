@@ -26,9 +26,6 @@ endif
 
 if !exists('g:autocdls_alter_letter')
   let g:autocdls_alter_letter = 0
-  if g:autocdls_alter_letter
-    let s:alter_letter_entries = []
-  endif
 endif
 
 if !exists('g:autocdls_newline_disp')
@@ -63,7 +60,7 @@ function! autocdls#colorize(list) "{{{
   highlight LsExecutable cterm=NONE ctermfg=NONE ctermfg=Green     gui=NONE guifg=Green     guibg=NONE
   highlight LsSymbolick  cterm=NONE ctermfg=NONE ctermfg=LightBlue gui=NONE guifg=LightBlue guibg=NONE
 
-  if !g:autocdls_ls_highlight
+  if g:autocdls_ls_highlight == 0
     highlight LsDirectory  NONE
     highlight LsExecutable NONE
     highlight LsSymbolick  NONE
@@ -289,6 +286,7 @@ endfunction "}}}
 
 " Capitalize {{{
 if g:autocdls_alter_letter
+  let s:alter_letter_entries = []
   call autocdls#alter_letter_add('^ls$',  'Ls')
   call autocdls#alter_letter_add('^ls!$', 'Ls!')
   cnoremap <expr> <Space> autocdls#alter_letter()
