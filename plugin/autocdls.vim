@@ -25,7 +25,7 @@ endif
 
 nnoremap <silent> <Plug>(autocdls-do-ls) :<C-u>call autocdls#get_list(getcwd(), '', '')<CR>
 nnoremap <silent> <Plug>(autocdls-do-lsgrep) :<C-u>call autocdls#ls_grep(1, '')<CR>
-command! -nargs=? -bar -bang -complete=file Ls call autocdls#get_list(<q-args>, <q-bang>, '')
+command! -nargs=? -bar -bang -complete=file Ls call autocdls#get_list(<q-args>, <q-bang>, 2)
 command! -nargs=1 -bar -bang -complete=dir LsGrep call autocdls#ls_grep(<q-args>, <q-bang>)
 
 let &cpo = s:save_cpo

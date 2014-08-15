@@ -210,7 +210,7 @@ function! autocdls#get_list(path, bang, option) "{{{
   endfor
   "}}}
 
-  if a:option
+  if a:option == 1
     return s:lists
   endif
 
@@ -228,7 +228,8 @@ function! autocdls#get_list(path, bang, option) "{{{
     echon "\t"
   endif "}}}
 
-  if !a:option
+  if a:option == 0
+  "if !empty(a:option) && a:option == 0
     if strlen(join(s:lists)) > &columns * &cmdheight
       echohl WarningMsg
       echo len(s:lists) . ': too many files'
