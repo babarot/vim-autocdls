@@ -189,6 +189,7 @@ function! autocdls#get_list(path, bang, option) "{{{
     let filelist .= glob(path . "/.??*")
   endif
   let &wildignore = save_ignore
+  let filelist = substitute(filelist, '', '^M', 'g')
 
   if empty(filelist)
     echo "no file"
