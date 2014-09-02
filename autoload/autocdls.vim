@@ -182,10 +182,13 @@ function! autocdls#get_list(path, bang, option) "{{{
   endif "}}}}
 
   " Get the file list, accutually {{{
+  let save_ignore = &wildignore
+  set wildignore=
   let filelist = glob(path . "/*")
   if !empty(a:bang)
     let filelist .= glob(path . "/.??*")
   endif
+  let &wildignore = save_ignore
 
   if empty(filelist)
     echo "no file"
