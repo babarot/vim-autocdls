@@ -186,6 +186,7 @@ function! autocdls#get_list(path, bang, option) "{{{
   set wildignore=
   let filelist = glob(path . "/*")
   if !empty(a:bang)
+    let filelist .= "\n"
     let filelist .= glob(path . "/.??*")
   endif
   let &wildignore = save_ignore
