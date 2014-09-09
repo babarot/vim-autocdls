@@ -25,7 +25,7 @@ if !exists('g:autocdls_show_pwd')
 endif
 
 if !exists('g:autocdls_alter_letter')
-  let g:autocdls_alter_letter = 0
+  let g:autocdls_alter_letter = 1
 endif
 
 if !exists('g:autocdls_newline_disp')
@@ -40,49 +40,29 @@ if !exists('g:autocdls_lsgrep_ignorecase')
   let g:autocdls_lsgrep_ignorecase = 1
 endif
 "}}}
+" Capitalize automatically {{{
+if g:autocdls_alter_letter == 1
+  function! autocdls#alter_letter_add(original_pattern, alternate_name) "{{{
+    call add(s:alter_letter_entries, [a:original_pattern, a:alternate_name])
+  endfunction "}}}
+  function! autocdls#alter_letter() "{{{
+    let cmdline = getcmdline()
+    for [original_pattern, alternate_name] in s:alter_letter_entries
+      if cmdline =~# original_pattern
+        return "\<C-u>" . alternate_name . substitute(cmdline, original_pattern, '', 'g') . " "
+      endif
+    endfor
+    return ' '
+  endfunction "}}}
 
-function! autocdls#alter_letter_add(original_pattern, alternate_name) "{{{
-  call add(s:alter_letter_entries, [a:original_pattern, a:alternate_name])
-endfunction "}}}
+  let s:alter_letter_entries = []
+  call autocdls#alter_letter_add('^ls$',  'Ls')
+  call autocdls#alter_letter_add('^ls!$', 'Ls!')
+  cnoremap <expr> <Space> autocdls#alter_letter()
+endif "}}}
 
-function! autocdls#alter_letter() "{{{
-  let cmdline = getcmdline()
-  for [original_pattern, alternate_name] in s:alter_letter_entries
-    if cmdline =~# original_pattern
-      return "\<C-u>" . alternate_name . substitute(cmdline, original_pattern, '', 'g') . " "
-    endif
-  endfor
-  return ' '
-endfunction "}}}
-
-function! autocdls#colorize(list) "{{{
-  highlight LsDirectory  cterm=bold ctermfg=NONE ctermfg=26        gui=bold guifg=#0096FF   guibg=NONE
-  highlight LsExecutable cterm=NONE ctermfg=NONE ctermfg=Green     gui=NONE guifg=Green     guibg=NONE
-  highlight LsSymbolick  cterm=NONE ctermfg=NONE ctermfg=LightBlue gui=NONE guifg=LightBlue guibg=NONE
-
-  if g:autocdls_ls_highlight == 0
-    highlight LsDirectory  NONE
-    highlight LsExecutable NONE
-    highlight LsSymbolick  NONE
-  endif
-
-  for item in a:list
-    if item =~ '/'
-      echohl LsDirectory | echon item[:-2] | echohl NONE
-      echon item[-1:-1] . " "
-    elseif item =~ '*'
-      echohl LsExecutable | echon item[:-2] | echohl NONE
-      echon item[-1:-1] . " "
-    elseif item =~ '@'
-      echohl LsSymbolick | echon item[:-2] | echohl NONE
-      echon item[-1:-1] . " "
-    else
-      echon item . " "
-    endif
-  endfor
-endfunction "}}}
-
-function! autocdls#auto_cdls() "{{{
+function! autocdls#ls_after_cd() "{{{
+  " Capitalize, if typting :ls and CR key only.
   if g:autocdls_alter_letter == 1
     let cmdline = getcmdline()
     for [original_pattern, alternate_name] in s:alter_letter_entries
@@ -94,99 +74,50 @@ function! autocdls#auto_cdls() "{{{
 
   " Support cd, lcd and chdir
   if getcmdtype() == ':' && getcmdline() =~# '^cd\|^chd\%\[ir\]\|^lcd\?'
-    " Only real path
     let raw_path = substitute(getcmdline(), '\(^cd\|^chd\%\[ir\]\|^lcd\?\)\s*', '', 'g')
-
     redraw
-    return empty(raw_path) ? "\<CR>" . autocdls#get_list($HOME, '', 0) : "\<CR>" . autocdls#get_list(fnamemodify(raw_path, ":p"), '', 0)
+    return empty(raw_path) ? "\<CR>" . autocdls#get_list($HOME, '') : "\<CR>" . autocdls#get_list(fnamemodify(raw_path, ":p"), '')
   else
     return "\<CR>"
   endif
 endfunction "}}}
+function! autocdls#get_path(path) "{{{
+  let path = empty(a:path) ? getcwd() : substitute(expand(a:path), '/$', '', 'g')
 
-function! autocdls#get_filesize(file) "{{{
-  let size = getfsize(a:file)
-  if size < 0
-    let size = 0
-  endif
-  for unit in ['B', 'KB', 'MB']
-    if size < 1024
-      return size . unit
+  if path ==# '.'
+    echo system("ls -dl " . shellescape(path) . '/')
+    throw 'ls_result'
+  else
+    if filereadable(path)
+      echo system("ls -l " . shellescape(path))
+      throw 'ls_result'
+    elseif isdirectory(path)
+      return path
+    elseif !isdirectory(path)
+      throw path . ': No such file or directory'
+    else
+      throw 'autocdls: a fatal error'
     endif
-    let size = size / 1024
-  endfor
-  return size . 'GB'
+  endif
 endfunction "}}}
-
-function! autocdls#get_fileinfo(file, bang) "{{{
-  if empty(a:file)
+function! autocdls#get_list(path, bang, ...) "{{{
+  try
+    let path = autocdls#get_path(a:path)
+  catch /^ls_result$/
     return
-  endif
-  let file = a:file
+  catch /^autocdls:/
+    errormsg v:exception
+    return
+  catch /:.*directory$/
+    echohl ErrorMsg |echomsg v:exception |echohl None
+    return
+  endtry
 
-  let ftype = getftype(file)
-  let fpath = fnamemodify(file, ":p")
-  let fname = fnamemodify(file, ":t")
-  let fsize = autocdls#get_filesize(file)
-  let ftime = strftime("%Y-%m-%d %T", getftime(file))
-  let fperm = getfperm(file)
-
-  echon "[". ftype ."] "
-  echon fperm . " "
-  echon ftime . " "
-  echon "("
-  if ftype ==# 'dir'
-    echon len(split(glob(fpath. "/*") . string(empty(a:bang) ? '' : glob(fpath . "/.??*")), "\n"))
-  else
-    echon fsize
-  endif
-  echon ") "
-  if ftype ==# 'dir'
-    echohl LsDirectory | echon fname | echohl NONE
-    echon "/"
-  elseif ftype ==# 'link'
-    echohl LsSymbolick | echon fname | echohl NONE
-    echon "@" . " -> "
-    echon resolve(fpath)
-  elseif executable(file)
-    echohl LsExecutable | echon fname | echohl NONE
-    echon "*"
-  else
-    echon fname
-  endif
-endfunction "}}}
-
-function! autocdls#get_list(path, bang, option) "{{{
-  let bang = a:bang
-
-  " Argmrnt of ':Ls' {{{
-  if empty(a:path)
-    let path = getcwd()
-  else
-    if a:path == '.'
-      call autocdls#get_fileinfo(getcwd(), bang)
-      return
-    endif
-
-    let path = substitute(expand(a:path), '/$', '', 'g')
-    if getftype(path) != '' && getftype(path) != 'dir'
-      call autocdls#get_fileinfo(path, bang)
-      return
-    endif
-    if !isdirectory(path)
-      echohl ErrorMsg
-      echo path ": No such file or directory"
-      echohl NONE
-      return
-    endif
-  endif "}}}}
-
-  " Get the file list, accutually {{{
   let save_ignore = &wildignore
   set wildignore=
   let filelist = glob(path . "/*")
   if !empty(a:bang)
-    let filelist .= glob(path . "/.??*")
+    let filelist .= "\n" . glob(path . "/.??*")
   endif
   let &wildignore = save_ignore
   let filelist = substitute(filelist, '', '^M', 'g')
@@ -195,9 +126,7 @@ function! autocdls#get_list(path, bang, option) "{{{
     echo "no file"
     return
   endif
-  "}}}
 
-  " Add identifier to tail {{{
   let s:lists = []
   for file in split(filelist, "\n")
     if isdirectory(file)
@@ -212,9 +141,9 @@ function! autocdls#get_list(path, bang, option) "{{{
       endif
     endif
   endfor
-  "}}}
 
-  if a:option == 1
+  " Use s:ls_grep
+  if a:0 && a:1 == 1
     return s:lists
   endif
 
@@ -232,28 +161,73 @@ function! autocdls#get_list(path, bang, option) "{{{
     echon "\t"
   endif "}}}
 
-  if a:option == 0
-  "if !empty(a:option) && a:option == 0
+  if a:0 == 0
     if strlen(join(s:lists)) > &columns * &cmdheight
       echohl WarningMsg
       echo len(s:lists) . ': too many files'
       echohl NONE
       return
     endif
-  else
+  elseif a:0 && a:1 == 2
     if g:autocdls_newline_disp
-      let nlists = []
-      for item in copy(s:lists)
-        call add(nlists, "\n" . item)
-      endfor
-      unlet s:lists
-      let s:lists = nlists
+      if g:autocdls_ls_highlight
+        call autocdls#colorize(s:lists, g:autocdls_newline_disp)
+      else
+        echon "\n".join(s:lists, "\n")
+      endif
+      return
     endif
   endif
 
-  call autocdls#colorize(s:lists)
+  if g:autocdls_ls_highlight
+    call autocdls#colorize(s:lists)
+  else
+    echon join(s:lists)
+  endif
 endfunction "}}}
+function! autocdls#colorize(list, ...) "{{{
+  highlight LsDirectory  cterm=bold ctermfg=NONE ctermfg=26        gui=bold guifg=#0096FF   guibg=NONE
+  highlight LsExecutable cterm=NONE ctermfg=NONE ctermfg=Green     gui=NONE guifg=Green     guibg=NONE
+  highlight LsSymbolick  cterm=NONE ctermfg=NONE ctermfg=LightBlue gui=NONE guifg=LightBlue guibg=NONE
 
+  if g:autocdls_ls_highlight == 0
+    highlight LsDirectory  NONE
+    highlight LsExecutable NONE
+    highlight LsSymbolick  NONE
+  endif
+
+  "let sep = ' '
+  "if a:0 "&& a:1 == g:autocdls_newline_disp
+  "  let sep = g:autocdls_newline_disp ? "\n" : " "
+  "endif
+  let sep = a:0 && g:autocdls_newline_disp ? "\n" : " "
+  if g:autocdls_newline_disp
+    "echo sep
+  endif
+
+  for item in a:list
+    if item =~ '/'
+      echon sep
+      echohl LsDirectory | echon item[:-2] | echohl NONE
+      echon item[-1:-1]
+      ". sep
+    elseif item =~ '*'
+      echon sep
+      echohl LsExecutable | echon item[:-2] | echohl NONE
+      echon item[-1:-1]
+      ". sep
+    elseif item =~ '@'
+      echon sep
+      echohl LsSymbolick | echon item[:-2] | echohl NONE
+      echon item[-1:-1]
+      ". sep
+    else
+      echon sep
+      echon item 
+      ". sep
+    endif
+  endfor
+endfunction "}}}
 function! autocdls#ls_grep(pattern, bang) "{{{
   if empty(a:pattern)
     echohl WarningMsg
@@ -288,14 +262,6 @@ function! autocdls#ls_grep(pattern, bang) "{{{
 
   call autocdls#colorize(lists)
 endfunction "}}}
-
-" Capitalize {{{
-if g:autocdls_alter_letter
-  let s:alter_letter_entries = []
-  call autocdls#alter_letter_add('^ls$',  'Ls')
-  call autocdls#alter_letter_add('^ls!$', 'Ls!')
-  cnoremap <expr> <Space> autocdls#alter_letter()
-endif "}}}
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

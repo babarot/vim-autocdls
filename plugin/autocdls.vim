@@ -15,12 +15,12 @@ set cpo&vim
 " Cd to its directory when opening the file
 augroup autocdls-auto-cd
   autocmd!
-  autocmd BufEnter * execute ":lcd " . expand("%:p:h")
+  "autocmd BufEnter * execute ":lcd " . expand("%:p:h")
 augroup END
 
 let g:autocdls_autols#enable = get(g:, 'autocdls_autols#enable', 1)
 if g:autocdls_autols#enable
-  cnoremap <expr> <CR> autocdls#auto_cdls()
+  cnoremap <expr> <CR> autocdls#ls_after_cd()
 endif
 
 nnoremap <silent> <Plug>(autocdls-do-ls) :<C-u>call autocdls#get_list(getcwd(), '', '')<CR>
