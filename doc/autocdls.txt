@@ -60,7 +60,7 @@ n <Plug>(autocdls-do-lsgrep)                    |<Plug>(autocdls-do-lsgrep)|
 ==============================================================================
 *VARIABLES*                                       *autocdls-variables*
 
-g:autocdls_autols#enable                    *g:autocdls_autols#enable*
+g:autocdls_autols_enabled                   *g:autocdls_autols_enabled*
                                                 (default: 1)
 
         Enable to |autocdls|, automatically execute 'ls' after 'cd'.

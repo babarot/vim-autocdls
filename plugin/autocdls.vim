@@ -18,8 +18,8 @@ augroup autocdls-auto-cd
   "autocmd BufEnter * execute ":lcd " . expand("%:p:h")
 augroup END
 
-let g:autocdls_autols#enable = get(g:, 'autocdls_autols#enable', 1)
-if empty(maparg('<CR>', 'c')) && g:autocdls_autols#enable
+let g:autocdls_autols_enabled = get(g:, 'autocdls_autols_enabled', 1)
+if empty(maparg('<CR>', 'c')) && g:autocdls_autols_enabled
   cnoremap <expr> <CR> autocdls#ls_after_cd()
 endif
 
