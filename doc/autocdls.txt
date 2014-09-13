@@ -152,5 +152,8 @@ SOFTWARE.
             - Colorize results of |:Ls| and so on.
             - Change internal code. Use list structure to return.
 
+1.0.0       2014-09-13
+            - Upload www.vim.org
+
 ==============================================================================
  vim:tw=78:et:ft=help:norl:
