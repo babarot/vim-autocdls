@@ -12,27 +12,30 @@ If you install autocdls.vim, it enables you to 'ls' after 'cd' automatically.
 
 	:Ls[!] [{path}]
 
-        Show up some files in the {path} directory to cmd-line.
-        If you want to show up all the files, including the files that begin
-        with a dot in the {path} directory, then please put a bang. (|:Ls!|)
-        If you omit the {path}, the current directory is specified as {path}.
-        
+* Show up some files in the `{path}` directory to cmd-line.
+
+* If you want to show up all the files, including the files that begin with a dot in the `{path}` directory, then please put a bang(`:Ls!`).
+
+* If you omit the `{path}`, the current directory is specified as `{path}`.
+
+Next,
+
 	:LsGrep[!] {word}
 
-        Display the candidate that has the name of the directory that
-        contains the {word} in the current directory.
-        As well as |:Ls!|, if you want to search the directory that contains
-        the {word}, then please put a bang. (|:LsGrep!|)
+* Display the candidate that has the name of the directory name that contains the `{word}` in the current directory.
+
+* As well as `:Ls!`, if you want to search the directory name that contains the `{word}`, then please put a bang(`:LsGrep!`).
 
 # Options
 
 	" Set height of cmd-line (equals &cmdheight)
 	let g:autocdls_set_cmdheight = 2
-	" Count number of files when doing Ls
+	
+	" Count number of files when doing ':Ls'
 	let g:autocdls_show_filecounter = 1
-	" View pwd when doing Ls
+	
+	" View pwd when doing ':Ls'
 	let g:autocdls_show_pwd = 0
-	" Repleace ls by Ls in cmd-line
+	
+	" Repleace ':ls' with ':Ls' automatically
 	let g:autocdls_alter_letter = 1
-	" Change spaces to newline (not recommended)
-	let g:autocdls_newline_disp = 0
