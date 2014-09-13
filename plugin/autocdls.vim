@@ -19,7 +19,7 @@ augroup autocdls-auto-cd
 augroup END
 
 let g:autocdls_autols#enable = get(g:, 'autocdls_autols#enable', 1)
-if g:autocdls_autols#enable
+if empty(maparg('<CR>', 'c')) && g:autocdls_autols#enable
   cnoremap <expr> <CR> autocdls#ls_after_cd()
 endif
 
