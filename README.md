@@ -24,16 +24,6 @@ If you install autocdls.vim, it enables you to 'ls' after 'cd' automatically.
         As well as |:Ls!|, if you want to search the directory that contains
         the {word}, then please put a bang. (|:LsGrep!|)
 
-
-# Key mapping
-
-Optional.
-
-	nmap <Leader>ls <Plug>(autocdls-dols)
-	nmap <Leader>g  <Plug>(autocdls-do-lsgrep)
-
-write your vimrc.
-
 # Options
 
 	" Set height of cmd-line (equals &cmdheight)
