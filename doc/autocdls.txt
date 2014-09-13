@@ -11,7 +11,6 @@ CONTENTS                    *autocdls-contents*
 Introduction                |autocdls-introduction|
 Interface                   |autocdls-interface|
   Commands                  |autocdls-commands|
-  Keymappings               |autocdls-keymappings|
 Variables                   |autocdls-variables|
 License                     |autocdls-license|
 Changelog                   |autocdls-changelog|
@@ -42,20 +41,6 @@ COMMANDS                                        *autocdls-commands*
         contains the {word} in the current directory.
         As well as |:Ls!|, if you want to search the directory that contains
         the {word}, then please put a bang. (|:LsGrep!|)
-
-------------------------------------------------------------------------------
-KEYMAPPINGS                                     *autocdls-keymappings*
-
-n <Plug>(autocdls-do-ls)                        |<Plug>(autocdls-do-ls)|
-        Show up some files in current directory.
-    
-        Example:
-            nmap <Leader>ls <Plug>(autocdls-do-ls)
-        write your vimrc.
-
-n <Plug>(autocdls-do-lsgrep)                    |<Plug>(autocdls-do-lsgrep)|
-        Narrow down the candidate when you do |:Ls| like the 'grep' commands.
-        Input the word to search from the cmd-line.
 
 ==============================================================================
 *VARIABLES*                                       *autocdls-variables*
