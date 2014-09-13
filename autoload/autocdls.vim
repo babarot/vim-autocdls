@@ -1,7 +1,7 @@
 " autocdls.vim
-"   Do ls after cd automatically.
+"   Automatically ls after cd in Vim.
 " Author:  b4b4r07
-" Version: 0.1.2
+" Version: 1.0
 " License: MIT
 
 let s:save_cpo = &cpo
