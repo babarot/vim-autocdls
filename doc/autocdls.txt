@@ -4,9 +4,10 @@ Version: 1.0
 Author: b4b4r07 (https://github.com/b4b4r07)
 License: MIT License
 Repository: https://github.com/b4b4r07/vim-autocdls
-Last Change: 2014/08/12
+Last Change: 2014/10/07
 
-CONTENTS                    *autocdls-contents*
+*CONTENTS*
+                                                           *autocdls-contents*
 
 Introduction                |autocdls-introduction|
 Interface                   |autocdls-interface|
@@ -16,60 +17,67 @@ License                     |autocdls-license|
 Changelog                   |autocdls-changelog|
 
 ==============================================================================
-INTRODUCTION                                    *autocdls-introduction*
+*INTRODUCTION*
+                                                       *autocdls-introduction*
 
 If you install autocdls.vim, it enables you to 'ls' after 'cd'
 automatically.
 
-Install in ~/.vim
-
-    NeoBundle 'b4b4r07/vim-autocdls'
-<
 ==============================================================================
-*INTERFACE*                                       *autocdls-interface*
+*INTERFACE*
+                                                          *autocdls-interface*
 ------------------------------------------------------------------------------
-COMMANDS                                        *autocdls-commands*
+*COMMANDS*
+                                                           *autocdls-commands*
 
-:Ls[!] [{path}]                                 *:Ls*
+:Ls[!] [{path}]
+                                                                         *:Ls*
         Show up some files in the {path} directory to cmd-line.
         If you want to show up all the files, including the files that begin
         with a dot in the {path} directory, then please put a bang. (|:Ls!|)
         If you omit the {path}, the current directory is specified as {path}.
 
-:LsGrep[!] {word}                               *:LsGrep*
+:LsGrep[!] {word}
+                                                                     *:LsGrep*
         Display the candidate that has the name of the directory that
         contains the {word} in the current directory.
         As well as |:Ls!|, if you want to search the directory that contains
         the {word}, then please put a bang. (|:LsGrep!|)
 
 ==============================================================================
-*VARIABLES*                                       *autocdls-variables*
+*VARIABLES*
+                                                          *autocdls-variables*
 
-g:autocdls_autols_enabled                   *g:autocdls_autols_enabled*
-                                                (default: 1)
+g:autocdls_autols_enabled
+                                                   *g:autocdls_autols_enabled*
+                                                                (default: 1)
 
         Enable to |autocdls|, automatically execute 'ls' after 'cd'.
         You can use |:Ls| and |:LsGrep| even though the value is equivalent to 0.
         If you don't want to automatically execute 'ls', you should set 0 to
         this value.
 
-g:autocdls_set_cmdheight                    *g:autocdls_set_cmdheight*
-                                                (default: &cmdheight)
+g:autocdls_set_cmdheight
+                                                    *g:autocdls_set_cmdheight*
+                                                       (default: &cmdheight)
 
         Chnage the cmd-line's height.
 
-g:autocdls_show_filecounter                 *g:autocdls_show_filecounter*
-                                                (default: 1)
+g:autocdls_show_filecounter
+                                                 *g:autocdls_show_filecounter*
+                                                                (default: 1)
+
+        Print working directory on cmd-line.
+
+g:autocdls_show_pwd
+                                                         *g:autocdls_show_pwd*
+                                                                (default: 0)
 
         Show number of files in current directory to cmd-line
 
-g:autocdls_show_pwd                         *g:autocdls_show_pwd*
-                                                (default: 0)
-
-        Show number of files in current directory to cmd-line
-
-g:autocdls_alter_letter                     *g:autocdls_alter_letter*
-                                                (default: 0)
+g:autocdls_alter_letter
+                                                     *g:autocdls_alter_letter*
+                                                                (default: 0)
 
         Capitalize or uncapitalize automatically. By this, typing
         'ls' means typing 'Ls' in cmd-line. However, if the value
@@ -77,8 +85,9 @@ g:autocdls_alter_letter                     *g:autocdls_alter_letter*
         list and when you type 'ls<CR>' or  'ls<Space>', automatically
         replace each 'Ls<CR>' or 'Ls<Space>'.
 
-g:autocdls_newline_disp                     *g:autocdls_newline_disp*
-                                                (default: 0)
+g:autocdls_newline_disp
+                                                     *g:autocdls_newline_disp*
+                                                                (default: 0)
 
         Change result of |:Ls| or |:Ls!|. Default delimiter is space,
         but when this variables equals one, delimiter is newline.
@@ -93,22 +102,25 @@ g:autocdls_newline_disp                     *g:autocdls_newline_disp*
             jiro/
             Press ENTER or type command to continue~
 
-g:autocdls_ls_highlight                     *g:autocdls_ls_highlight*
-                                                (default: 1)
+g:autocdls_ls_highlight
+                                                     *g:autocdls_ls_highlight*
+                                                                (default: 1)
 
         Colorize its results when doing |:Ls| and |:LsGrep|. Directory color
         is bluish. Executable files are greenish. Symbolick files are
         lightblue.
 
-g:autocdls_lsgrep_ignorecase                *g:autocdls_lsgrep_ignorecase*
-                                                (default: 1)
+g:autocdls_lsgrep_ignorecase
+                                                *g:autocdls_lsgrep_ignorecase*
+                                                                (default: 1)
 
         If the value is equivalent to 1, it makes |:LsGrep|'s search case
         insensitive. For example, if you input 'apple', it matches both
         'a' and 'A'.
 
 ==============================================================================
-*LICENSE*                                         *autocdls-license*
+*LICENSE*
+*                                                           *autocdls-license*
 
 The MIT License (MIT)
 
@@ -133,26 +145,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ==============================================================================
-*CHANGELOG*                                       *autocdls-changelog*
+*CHANGELOG*
+                                                          *autocdls-changelog*
 
-0.1.0       2014-07-30
+0.1       2014-07-30
             - Initial version.
 
-0.1.1       2014-08-03
+0.2       2014-08-03
             - Fix syntax error.
             - No |:cd| and |:lcd| in internal
             - Add |:LsAll|
 
-0.1.2       2014-08-05
+0.3       2014-08-05
             - Add |:LsGrep|
             - Merge |:LsAll| into |:Ls!|
             - Change method of newline-disp (use |g:autocdls_newline_disp|)
 
-0.1.3       2014-08-12
+0.4       2014-08-12
             - Colorize results of |:Ls| and so on.
             - Change internal code. Use list structure to return.
 
-1.0.0       2014-09-13
+1.0       2014-09-13
             - Upload www.vim.org
 
 ==============================================================================
