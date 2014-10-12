@@ -55,13 +55,13 @@ Put all files under `$VIM`.
 
 Install with the following command.
 
-	git clone https://github.com/b4b4r07/vim-shellutils ~/.vim/bundle/lightline.vim
+	git clone https://github.com/b4b4r07/vim-autocdls ~/.vim/bundle/vim-autocdls
 
 ### Vundle (<https://github.com/gmarik/Vundle.vim>)
 
 Add the following configuration to your `.vimrc`.
 
-	Plugin 'b4b4r07/vim-shellutils'
+	Plugin 'b4b4r07/vim-autocdls'
 
 Install with `:PluginInstall`.
 
