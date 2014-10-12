@@ -72,7 +72,7 @@ Install with `:PluginInstall`.
 
 Add the following configuration to your `.vimrc`.
 
-	NeoBundle 'b4b4r07/vim-shellutils'
+	NeoBundle 'b4b4r07/vim-autocdls'
 
 Install with `:NeoBundleInstall`.
 
