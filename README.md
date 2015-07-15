@@ -1,19 +1,16 @@
-vim-autocdls
-===
+![](https://raw.githubusercontent.com/b4b4r07/screenshots/master/vim-autocdls/logo.png)
+
+[![](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
 
 Automatically execute shell-like `ls` command after `:cd` in Vim.
 
-## Description
-
-`vim-shellutils` provides `:Ls` user-defined command that id shell-like `ls` commands in Vim. In addition, if `g:autocdls_autols_enabled` is true in this plugin, `:Ls` command is executed automatically after executing `:cd`, `:lcd` and so on. Thanks to that, make it easy to know file list in cwd.
-
 ***DEMO:***
 
-![](http://cl.ly/image/1t0W0V3W3E2O/autocdls.gif)
+![](https://raw.githubusercontent.com/b4b4r07/screenshots/master/vim-autocdls/demo.gif)
 
-## Requirement
+## Description
 
-Vim (+Huge) 7.3 or more
+`vim-autocdls` provides `:Ls` user-defined command that id shell-like `ls` commands in Vim. In addition, if `g:autocdls_autols_enabled` is true in this plugin, `:Ls` command is executed automatically after executing `:cd`, `:lcd` and so on. Thanks to that, make it easy to know file list in cwd.
 
 ## Usage
 
@@ -28,8 +25,6 @@ Show up some files in the {path} directory to cmd-line. If you want to show up a
 	:LsGrep[!] {word}
 
 Display the candidate that has the name of the directory that contains the {word} in the current directory. As well as `:Ls!`, if you want to search the directory that contains the {word}, then please put a bang. (`:LsGrep!`)
-
-## Option
 
 ### `g:autocdls_show_filecounter`
 
@@ -47,30 +42,16 @@ For more information, see also [help](./doc/vim-autocdls.txt)
 
 ## Installation
 
-### Manually
+[Neobundle](https://github.com/Shougo/neobundle.vim) | [Vundle](https://github.com/VundleVim/Vundle.vim) | [vim-plug](https://github.com/junegunn/vim-plug)
 
-- [Pathogen](https://github.com/tpope/vim-pathogen)
-
-	Put all files under `$VIM`. Install with the following command.
-
-		git clone https://github.com/b4b4r07/vim-autocdls ~/.vim/bundle/vim-autocdls
-
-### Plugin Manager
-
-Add the following configuration to your `.vimrc`.
-
-- [NeoBundle](https://github.com/Shougo/neobundle.vim)
-
-		NeoBundle 'b4b4r07/vim-autocdls'
-
-- [Vundle]()
-
-		Plugin 'b4b4r07/vim-autocdls'
-
-- [vim-plug]()
-
-		Plug 'b4b4r07/vim-autocdls'
+```vim
+NeoBundle 'b4b4r07/vim-autocdls'
+Plugin    'b4b4r07/vim-autocdls'
+Plug      'b4b4r07/vim-autocdls'
+```
 
 ## Licence
 
-The MIT License ([MIT](http://opensource.org/licenses/MIT))
+[MIT][license] © [b4b4r07](http://b4b4r07.com)
+
+[license]: https://raw.githubusercontent.com/b4b4r07/dotfiles/master/doc/LICENSE-MIT.txt
