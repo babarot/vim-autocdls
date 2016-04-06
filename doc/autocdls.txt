@@ -92,11 +92,11 @@ g:autocdls_newline_disp
         Change result of |:Ls| or |:Ls!|. Default delimiter is space,
         but when this variables equals one, delimiter is newline.
         ex)
-            *g:autocdls_newline_disp* is 0:
+            g:autocdls_newline_disp is 0:
             :Ls /home
             taro/ jiro/
         
-            *g:autocdls_newline_disp* is 1:
+            g:autocdls_newline_disp is 1:
             :Ls /home
             taro/
             jiro/
